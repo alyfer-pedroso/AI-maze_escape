@@ -51,6 +51,9 @@ const drawWalls = () => {
           createRect(j * oneBlockSize + wallOffset, i * oneBlockSize, wallSpaceWidth, wallSpaceWidth + wallOffset, wallInnerColor);
         }
       }
+      if (map[i][j] == 2) {
+        createRect(j * oneBlockSize + oneBlockSize / 3, i * oneBlockSize + oneBlockSize / 3, oneBlockSize / 3, oneBlockSize / 3, "#FEB897");
+      }
     }
   }
 };
@@ -62,18 +65,16 @@ const gameLoop = () => {
   createRect(0, 0, canvas.width, canvas.height, "black");
   drawWalls();
 
-  if (lastPoss.length > 0) {
-    lastPoss.forEach((pos) => {
-      pos.draw();
-    });
-  }
+  // if (lastPoss.length > 0) {
+  //   lastPoss.forEach((pos) => {
+  //     pos.draw();
+  //   });
+  // }
 
   let posX = player.x;
   let posY = player.y;
 
-  if (player.moving) {
-    lastPoss.push(new lastPos(posX, posY));
-  }
+  if (player.moving) lastPoss.push(new lastPos(posX, posY));
 
   // if (player.moving) player.drawCircle();
   player.update();

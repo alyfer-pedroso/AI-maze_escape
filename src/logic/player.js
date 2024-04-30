@@ -17,11 +17,11 @@ class Player {
     this.height = height;
     this.speed = speed;
     this.direction = DIRECTION_RIGHT;
-    this.count = 0;
     this.moving = false;
+    this.ignore = false;
     // setInterval(() => {
     //   this.changeRandomDirection();
-    // }, 1000);
+    // }, 2000);
   }
 
   changeRandomDirection() {
@@ -31,10 +31,25 @@ class Player {
   }
 
   moveProcess() {
-    if (this.exit()) return; // Saiu?
+    // if (this.exit()) return; // Saiu?
+    this.moving && this.lastPos();
     this.moveForwards();
     if (this.checkCollisions()) {
       this.moveBackwards();
+      switch (this.direction) {
+        case 4:
+          setTimeout(() => (this.direction = DIRECTION_BOTTOM), 200);
+          break;
+        case 3:
+          setTimeout(() => (this.direction = DIRECTION_LEFT), 200);
+          break;
+        case 2:
+          setTimeout(() => (this.direction = DIRECTION_UP), 200);
+          break;
+        case 1:
+          setTimeout(() => (this.direction = DIRECTION_RIGHT), 200);
+          break;
+      }
       return;
     }
   }
@@ -79,21 +94,61 @@ class Player {
     this.moving = true;
   }
 
+  lastPos() {
+    let lastX = this.x / oneBlockSize;
+    let lastY = this.y / oneBlockSize;
+    setTimeout(() => {
+      if (
+        map[parseInt(lastY)][parseInt(lastX - 0.9999)] != 1 ||
+        map[parseInt(lastY - 0.9999)][parseInt(lastX)] != 1 ||
+        map[parseInt(lastY)][parseInt(lastX + 0.9999)] != 1 ||
+        map[parseInt(lastY + 0.9999)][parseInt(lastX)]
+      ) {
+        switch (this.direction) {
+          case 4: // right
+            map[parseInt(lastY)][parseInt(lastX - 0.9999)] = 2;
+            break;
+          case 3: // down
+            map[parseInt(lastY - 0.9999)][parseInt(lastX)] = 2;
+            break;
+          case 2: // left
+            map[parseInt(lastY)][parseInt(lastX + 0.9999)] = 2;
+            break;
+          case 1: // up
+            map[parseInt(lastY + 0.9999)][parseInt(lastX)] = 2;
+            break;
+        }
+      }
+    }, 180);
+  }
+
   checkCollisions() {
     let isCollided = false;
     if (
       map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 1 ||
       map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 1 ||
       map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 1 ||
-      map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1
+      map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1 ||
+      map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 2 ||
+      map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 2 ||
+      map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 2 ||
+      map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 2
+      // ||
+      // map[parseInt(lastY)][parseInt(lastX)] == 2 ||
+      // map[parseInt(lastY - 0.9999)][parseInt(lastX)] == 2 ||
+      // map[parseInt(lastY)][parseInt(lastX + 0.9999)] == 2 ||
+      // map[parseInt(lastY + 0.9999)][parseInt(lastX)] == 2
     ) {
-      isCollided = true;
+      !this.ignore && (isCollided = true);
     }
+    // !isCollided && map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] != 1 && (map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] = 2)
 
-    console.log("frente", map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 1);
-    console.log("baixo", map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1);
-    console.log("atras", map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 1);
-    console.log("frente", map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 1);
+    // console.log("frente", map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 1);
+    // console.log("baixo", map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1);
+    // console.log("atras", map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 1);
+    // console.log("frente", map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 1);
+
+    // if(map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] === 2) isCollided = true;
 
     return isCollided;
   }
