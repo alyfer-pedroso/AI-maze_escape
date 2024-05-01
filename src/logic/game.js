@@ -9,8 +9,9 @@ const oneBlockSize = 35;
 const wallSpaceWidth = oneBlockSize / 1.6;
 const wallOffset = (oneBlockSize - wallSpaceWidth) / 2;
 const wallInnerColor = "black";
+let endGame = false;
 
-let lastPoss = [];
+let count = 0;
 
 const map = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -19,7 +20,7 @@ const map = [
   [1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1],
   [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1],
   [1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1],
-  [0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+  [4, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
   [1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -58,25 +59,27 @@ const drawWalls = () => {
   }
 };
 
-let player = new Player(0, oneBlockSize * 6, oneBlockSize, oneBlockSize, oneBlockSize / 7);
+// let player = new Player(0, oneBlockSize * 6, oneBlockSize, oneBlockSize, oneBlockSize / 5);
+let player = new Player2(0, oneBlockSize * 6, oneBlockSize, oneBlockSize, oneBlockSize / 5);
+// let player = new Player(0 + 5, 5 + oneBlockSize * 6, oneBlockSize - 10, oneBlockSize - 10, oneBlockSize / 7);
 
 const gameLoop = () => {
+  if (endGame) {
+    clearInterval(gameInterval);
+    alert("Fim de jogo! Você saiu do labirinto");
+  }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   createRect(0, 0, canvas.width, canvas.height, "black");
+
   drawWalls();
-
-  // if (lastPoss.length > 0) {
-  //   lastPoss.forEach((pos) => {
-  //     pos.draw();
-  //   });
-  // }
-
-  let posX = player.x;
-  let posY = player.y;
-
-  if (player.moving) lastPoss.push(new lastPos(posX, posY));
-
-  // if (player.moving) player.drawCircle();
   player.update();
 };
+
+const start = () => {
+  // setTimeout(() => {
+  //   map[6][0] = 1;
+  // }, 300);
+};
+
+start();
 gameInterval = setInterval(gameLoop, 1000 / 30);
